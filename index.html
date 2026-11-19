@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -8,7 +9,7 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial}
 html,body{height:100dvh;background:#020617;color:#fff;overflow:hidden}
 body{display:flex;flex-direction:column;position:relative}
-.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 10%,#fff,transparent),radial-gradient(1px 1px at 80% 40%,#fff,transparent),radial-gradient(1px 1px at 30% 70%,#fff,transparent),radial-gradient(1px 1px at 90% 80%,#fff,transparent),radial-gradient(1px 1px at 10% 90%,#fff,transparent);animation:twinkle 2s infinite alternate}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 10%,#fff,transparent),radial-gradient(1px 1px at 80% 40%,#fff,transparent),radial-gradient(1px 1px at 30% 70%,#fff,transparent),radial-gradient(1px 1px at 90% 80%,#fff,transparent);animation:twinkle 2s infinite alternate}
 @keyframes twinkle{from{opacity:.5}to{opacity:1}}
 header{flex-shrink:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(2,6,23,.8);backdrop-filter:blur(10px)}
 header b{font-size:19px} header span{font-size:12px;color:#93c5fd}
@@ -19,10 +20,10 @@ header b{font-size:19px} header span{font-size:12px;color:#93c5fd}
 .globe{width:90px;height:90px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 30% 30%,#60a5fa,#1e40af 55%,#020617);box-shadow:0 0 30px #3b82f6, inset -10px -10px 20px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:42px;animation:spin 12s linear infinite}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 #chat{flex:1;min-height:0;overflow-y:auto;z-index:2;padding:12px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
-.msg{max-width:88%;padding:12px 14px;border-radius:18px;font-size:16px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.msg{max-width:88%;padding:12px 14px;border-radius:18px;font-size:16px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word}
 .user{align-self:flex-end;background:#7c5cff;border-bottom-right-radius:5px}
 .ai{align-self:flex-start;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-bottom-left-radius:5px;backdrop-filter:blur(10px)}
-.ai img{max-width:100%;border-radius:12px;margin-top:8px}
+.ai img,.user img{max-width:100%;border-radius:12px;margin-top:6px;display:block}
 .searchWrap{flex-shrink:0;position:sticky;bottom:0;z-index:5;display:flex;gap:8px;padding:10px;background:rgba(2,6,23,.85);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.15);padding-bottom:calc(10px + env(safe-area-inset-bottom))}
 .searchWrap button{width:44px;height:46px;border-radius:50%;border:none;font-size:20px;cursor:pointer;background:#1e293b;color:#fff;flex-shrink:0}
 #input{flex:1;border:none;outline:none;background:#1e293b;color:#fff;padding:0 16px;border-radius:25px;font-size:16px;min-width:0}
@@ -39,25 +40,43 @@ header b{font-size:19px} header span{font-size:12px;color:#93c5fd}
 <button onclick="clearChat()">🗑️ Clear</button>
 </div>
 <div class="globeWrap"><div class="globe">🌎</div></div>
-<div id="chat"><div class="msg ai">Namaste! 🙏 Main Ankit AI hu. Kuch bhi pucho, Hindi me samjha dunga. Neeche likho ya bolo!</div></div>
+<div id="chat"><div class="msg ai">Namaste! Main Ankit AI hoon. Aap koi bhi sawal pooch sakte hain. Main aapko Hindi aur English ke simple mix me samjhaunga. Photo bhejna hai to + se bhejein.</div></div>
 <div class="searchWrap">
 <button onclick="startVoice()">🎤</button>
 <input id="input" placeholder="Yahan likho..." onkeydown="if(event.key==='Enter')sendMsg()">
-<button id="plus" onclick="document.getElementById('file').click()">+</button>
+<button onclick="document.getElementById('file').click()">+</button>
 <button id="send" onclick="sendMsg()">➤</button>
 </div>
 <input type="file" id="file" hidden accept="image/*" onchange="sendImage(event)">
 <script>
-let voiceOn=true, mode='chat';
+let voiceOn=true, mode='chat', lastPhoto=null;
 let chatBox=document.getElementById('chat');
+const SYSTEM_PROMPT="Tum Ankit AI ho, ek helpful teacher. Hindi aur English ke saaf mix me jawab do. Dost jaisa mazaak, slang, bakwaas mat karo. Seedha, saaf aur sahi jawab do. Agar sawal photo se hai to photo ko dhyaan se padh kar jawab do. Star ya ** ka use mat karo. Point me samjhao.";
+function cleanText(t){return (t||'').replace(/\*\*/g,'').replace(/\*/g,'').replace(/##+/g,'').replace(/###/g,'').trim();}
 function toggleVoice(){voiceOn=!voiceOn;document.getElementById('voiceBtn').innerText=voiceOn?'🔊 Voice ON':'🔇 Voice OFF';if(!voiceOn)speechSynthesis.cancel();}
-function setMode(m){mode=m;addMsg('ai',m==='image'?'Image Mode ON hai 🎨 Ab kya image banau? Likho jaise - "ek billi"':'Chat Mode ON hai 💬 Ab pucho!');}
-function addMsg(who,text){let d=document.createElement('div');d.className='msg '+who;d.innerText=text;chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;return d;}
-function speak(text){if(!voiceOn)return;try{speechSynthesis.cancel();let clean=text.replace(/[*#_<>]/g,'').replace(/\n+/g,'. ');let parts=clean.match(/.{1,400}(\s|$)/g)||[clean];let i=0;function speakNext(){if(i>=parts.length||!voiceOn)return;const u=new SpeechSynthesisUtterance(parts[i]);u.lang='hi-IN';u.rate=1;u.onend=()=>{i++;speakNext();};speechSynthesis.speak(u);}speakNext();}catch(e){}}
-async function sendMsg(){let inp=document.getElementById('input');let q=inp.value.trim();if(!q)return;addMsg('user',q);inp.value='';if(mode==='image'){let div=addMsg('ai','Image bana raha hu... 🎨');let img=document.createElement('img');img.src='https://image.pollinations.ai/prompt/'+encodeURIComponent(q)+'?seed='+Date.now();img.onload=()=>{div.innerHTML='Ye lo tumhari image! 🎨';div.appendChild(img);speak('Ye lo tumhari image ban gayi');};img.onerror=()=>{div.innerText='Image nahi bani, phir se try karo';};return;}let div=addMsg('ai','Soch raha hu... 🤔');try{let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent('Hinglish me simple Hindi-English mix me samjhao, jaise dost samjhata hai. Sawal: '+q));let ans=await r.text();div.innerText=ans;chatBox.scrollTop=chatBox.scrollHeight;speak(ans);}catch(e){div.innerText='Net slow hai, phir se try karo!';}}
-function clearChat(){chatBox.innerHTML='';addMsg('ai','Chat clear ho gaya! ✨ Naya sawal pucho.');speechSynthesis.cancel();}
-function startVoice(){let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){alert('Mic is browser me nahi chalega, Chrome me kholo');return;}let rec=new Rec();rec.lang='hi-IN';rec.onresult=e=>{document.getElementById('input').value=e.results[0][0].transcript;sendMsg();};rec.start();}
-function sendImage(e){let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{addMsg('user','[Photo bheji]');let div=addMsg('ai','Photo dekh li! 👀 Isme kya karna hai? Batao.');speak('Photo dekh li, batao isme kya karna hai');};rd.readAsDataURL(f);}
+function setMode(m){mode=m;addMsg('ai',m==='image'?'Image Mode ON hai. Aap kya image banana chahte hain, likhiye. Jaise - Ek billi':'Chat Mode ON hai. Ab aap apna sawal pooch sakte hain.');}
+function addMsg(who,text){let d=document.createElement('div');d.className='msg '+who;d.innerText=cleanText(text);chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;return d;}
+function speak(text){if(!voiceOn)return;try{speechSynthesis.cancel();let clean=cleanText(text).replace(/\n+/g,'. ');let parts=clean.match(/.{1,400}(\s|$)/g)||[clean];let i=0;function speakNext(){if(i>=parts.length||!voiceOn)return;const u=new SpeechSynthesisUtterance(parts[i]);u.lang='hi-IN';u.rate=1;u.onend=()=>{i++;speakNext();};speechSynthesis.speak(u);}speakNext();}catch(e){}}
+async function sendMsg(){
+let inp=document.getElementById('input');let q=inp.value.trim();if(!q)return;addMsg('user',q);inp.value='';
+if(mode==='image'){let div=addMsg('ai','Image ban rahi hai...');let img=document.createElement('img');img.src='https://image.pollinations.ai/prompt/'+encodeURIComponent(q)+'?seed='+Date.now();img.onload=()=>{div.innerHTML='Ye rahi aapki image:';div.appendChild(img);speak('Ye rahi aapki image ban gayi');};img.onerror=()=>{div.innerText='Image nahi bani, dobara koshish karein';};return;}
+let div=addMsg('ai','Soch raha hoon...');
+try{
+let ans='';
+if(lastPhoto){
+let r2=await fetch('https://text.pollinations.ai/openai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'openai',messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:[{type:'text',text:'Photo me jo sawal ya likha hua hai uska jawab do. User ka sawal: '+q},{type:'image_url',image_url:{url:lastPhoto}}]}]})});
+let j=await r2.json();ans=j.choices[0].message.content;
+}else{
+let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(SYSTEM_PROMPT+' Sawal: '+q));
+ans=await r.text();
+if(ans.includes('Free limit')||ans.includes('45 seconds')){div.innerText='Server busy hai, 45 second ruk kar dobara poochiye.';speak('Server busy hai, 45 second ruk kar dobara poochiye');return;}
+}
+ans=cleanText(ans);div.innerText=ans;chatBox.scrollTop=chatBox.scrollHeight;speak(ans);
+}catch(e){div.innerText='Network slow hai, kripya dobara koshish karein.';}
+}
+function clearChat(){chatBox.innerHTML='';lastPhoto=null;addMsg('ai','Chat saaf ho gaya. Naya sawal poochiye.');speechSynthesis.cancel();}
+function startVoice(){let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Rec){alert('Mic is browser me nahi chalega, Chrome me kholein');return;}let rec=new Rec();rec.lang='hi-IN';rec.onresult=e=>{document.getElementById('input').value=e.results[0][0].transcript;sendMsg();};rec.start();}
+function sendImage(e){let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{lastPhoto=rd.result;let d=document.createElement('div');d.className='msg user';let im=document.createElement('img');im.src=rd.result;d.appendChild(im);chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;addMsg('ai','Photo mil gayi. Ab neeche likhiye ki is photo ka kya karna hai. Jaise - Iska answer batao.');speak('Photo mil gayi, ab sawal likhiye');};rd.readAsDataURL(f);}
 </script>
 </body>
 </html>
