@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ankit AI</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;margin:0;color:#fff;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:#020617;}
+.space{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at top,#0ea5e9 0%,#1e3a8a 35%,#020617 70%,#000 100%);}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 2s infinite;}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
+.cloud{position:fixed;border-radius:50%;background:rgba(255,255,255,.08);filter:blur(40px);z-index:0;}
+header{position:relative;z-index:2;text-align:center;padding:14px 10px 0}
+header h1{margin:0;font-size:30px;letter-spacing:1px;background:linear-gradient(90deg,#fff,#fde68a,#f9a8d4,#93c5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:0 0 20px rgba(255,255,255,.2)}
+header p{margin:2px 0 0;font-size:12px;color:#e0e7ff;opacity:.9}
+.topBtns{position:relative;z-index:2;display:flex;justify-content:center;gap:6px;padding:10px;flex-wrap:wrap}
+.topBtns button{padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);backdrop-filter:blur(10px);color:#fff;font-size:12px;cursor:pointer}
+.topBtns button.active{background:#6366f1;border-color:#fff}
+.globeWrap{position:relative;z-index:2;text-align:center;margin-top:6px}
+.globe{font-size:110px;display:inline-block;animation:spinSlow 12s linear infinite, floatY 3s ease-in-out infinite;filter:drop-shadow(0 0 25px rgba(56,189,248,.9));}
+@keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes floatY{0%,100%{margin-top:0}50%{margin-top:-10px}}
+.globeText{font-size:15px;color:#e0f2fe;margin-top:2px}
+.globeText b{color:#fde68a}
+#chat{position:relative;z-index:2;flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;max-width:750px;width:100%;margin:0 auto}
+.msg{max-width:88%;padding:11px 14px;border-radius:16px;line-height:1.65;font-size:15px;white-space:pre-wrap;backdrop-filter:blur(12px);box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.msg.user{background:linear-gradient(135deg,#6366f1,#a855f7);align-self:flex-end;border-bottom-right-radius:4px}
+.msg.ai{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);align-self:flex-start;border-bottom-left-radius:4px}
+.msg img{max-width:100%;border-radius:12px;margin-top:8px;display:block}
+.welcome{text-align:center;margin:auto;color:#e0e7ff}
+.welcome h2{color:#fff;margin:6px 0;font-size:20px}
+.welcome p{font-size:13px;line-height:1.6}
+.chip{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:6px 10px;border-radius:999px;font-size:12px;margin:3px;cursor:pointer}
+.searchWrap{position:relative;z-index:2;padding:10px 12px 14px;max-width:750px;width:100%;margin:0 auto}
+.searchBar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.95);border-radius:999px;padding:6px 6px 6px 14px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.searchBar span{font-size:19px}
+.searchBar input{flex:1;border:0;outline:0;font-size:15px;background:transparent;color:#111}
+.plusBtn{width:44px;height:44px;border-radius:50%;border:0;background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;font-size:24px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 12px rgba(236,72,153,.5)}
+.micBtn{width:44px;height:44px;border-radius:50%;border:0;background:#0f172a;color:#fff;font-size:19px;cursor:pointer;flex-shrink:0}
+.sendBtn{background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;border:0;padding:11px 18px;border-radius:999px;font-weight:700;cursor:pointer;flex-shrink:0}
+#previewBox{display:none;position:relative;z-index:2;margin:0 auto 8px;max-width:750px;width:calc(100% - 24px);background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:10px;flex-direction:column;gap:8px}
+#previewBox img{width:80px;height:80px;object-fit:cover;border-radius:12px}
+.editRow{display:flex;gap:6px;flex-wrap:wrap}.editRow button{padding:8px 11px;border-radius:999px;border:0;font-size:12px;font-weight:700;color:#fff;cursor:pointer}
+.bgPick{display:flex;gap:6px;flex-wrap:wrap}.bgPick button{width:32px;height:32px;border-radius:50%;border:2px solid #fff;cursor:pointer}
+.dBtn{display:inline-block;margin-top:8px;background:#22c55e;color:#fff;text-decoration:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="space" id="starsBg"></div>
+<div class="cloud" style="width:300px;height:120px;top:20%;left:-50px"></div>
+<div class="cloud" style="width:280px;height:110px;top:55%;right:-40px"></div>
+<header><h1>Ankit AI ✨</h1><p>🟢 Online • Photo Padhega • Image Banayega • Decorate Karega</p></header>
+<div class="topBtns">
+<button id="voiceBtn" class="active" onclick="toggleVoice()">🔊 Voice ON</button>
+<button id="modeChat" class="active" onclick="setMode('chat')">💬 Chat</button>
+<button id="modeImg" onclick="setMode('image')">🎨 Image Banao</button>
+<button onclick="clearChat()">🗑️ Clear</button>
+</div>
+<div class="globeWrap" id="globeWrap"><div class="globe">🌎</div><div class="globeText">Namaste! Main <b>Ankit AI</b> hu ✨<br>Kuch bhi puchho, ya photo bhejo!</div></div>
+<div id="chat"><div class="welcome" id="welcome">
+<p>Try karo 👇</p>
+<span class="chip" onclick="quickAsk('SSC CHSL ka syllabus btao or uska image bhi bna do')">📚 SSC CHSL Syllabus + Image</span>
+<span class="chip" onclick="quickAsk('Shiva ki photo banao')">🎨 Shiva ki photo</span>
+<span class="chip" onclick="quickAsk('Photo bhejo, Decorate kar do')">✨ Photo Decorate</span>
+<p style="opacity:.8">📷 Photo bhejne ke liye neeche <b>+</b> dabao</p>
+</div></div>
+<div id="previewBox">
+<div style="display:flex;align-items:center;gap:10px"><img id="imgPreview"><span id="imgName" style="flex:1;font-size:13px"></span><button onclick="removeImage()" style="background:#ef4444;color:#fff;border:0;padding:6px 10px;border-radius:999px">✕</button></div>
+<div class="editRow">
+<button style="background:#a855f7" onclick="decorateImage()">✨ Decorate</button>
+<button style="background:#ef4444" onclick="removeBG()">✂️ BG Remove</button>
+<button style="background:#0ea5e9" onclick="showBGPicker()">🎨 BG Change</button>
+<button style="background:#f59e0b" onclick="enhanceImage()">🌟 Enhance 4K</button>
+</div>
+<div id="bgPicker" class="bgPick" style="display:none">
+<button style="background:#fff" onclick="changeBG('#ffffff')"></button>
+<button style="background:#3b82f6" onclick="changeBG('#3b82f6')"></button>
+<button style="background:#ec4899" onclick="changeBG('#ec4899')"></button>
+<button style="background:#22c55e" onclick="changeBG('#22c55e')"></button>
+<button style="background:#facc15" onclick="changeBG('#facc15')"></button>
+<button style="background:linear-gradient(135deg,#6366f1,#ec4899)" onclick="changeBG('gradient1')"></button>
+<button style="background:linear-gradient(135deg,#06b6d4,#22c55e)" onclick="changeBG('gradient2')"></button>
+<button style="background:#000" onclick="changeBG('#000000')"></button>
+</div>
+</div>
+<div class="searchWrap">
+<div class="searchBar">
+<span>🔍</span>
+<input type="text" id="message" placeholder="Yahan likho... jaise - SSC CHSL syllabus + image" onkeydown="if(event.key==='Enter') sendMessage()">
+<button class="micBtn" onclick="startListening()">🎤</button>
+<button class="plusBtn" onclick="document.getElementById('fileInput').click()" title="Photo Upload Karo">+</button>
+<input type="file" id="fileInput" accept="image/*" hidden onchange="onImageSelect(event)">
+<button class="sendBtn" onclick="sendMessage()">➤</button>
+</div>
+</div>
+<canvas id="myCanvas" style="display:none"></canvas>
+<script>
+const bg=document.getElementById("starsBg");
+for(let i=0;i<90;i++){let s=document.createElement("div");s.className="star";let sz=Math.random()*3+1;s.style.width=sz+"px";s.style.height=sz+"px";s.style.left=Math.random()*100+"%";s.style.top=Math.random()*100+"%";s.style.animationDelay=(Math.random()*2)+"s";bg.appendChild(s);}
+const chat=document.getElementById("chat");
+let voiceOn=true, selectedImage=null, mode='chat';
+let lastOCRText="", currentEditedImage=null;
+function quickAsk(t){document.getElementById("message").value=t;sendMessage();}
+function setMode(m){mode=m;document.getElementById('modeChat').classList.toggle('active',m==='chat');document.getElementById('modeImg').classList.toggle('active',m==='image');document.getElementById("message").placeholder=m==='image'?'Image ka naam likho - jaise Shiva ki photo':'Yahan likho...';}
+function toggleVoice(){voiceOn=!voiceOn;let b=document.getElementById('voiceBtn');b.innerText=voiceOn?'🔊 Voice ON':'🔇 Voice OFF';b.classList.toggle('active',voiceOn);if(!voiceOn){try{speechSynthesis.cancel()}catch(e){}}}
+function clearChat(){chat.innerHTML='<div class="welcome"><h2>Namaste! ✨</h2><p>Kuch bhi puchho!</p></div>';lastOCRText="";document.getElementById("globeWrap").style.display="block";}
+function addMessage(text,type,imgSrc=null,showDownload=false){const w=document.getElementById("welcome");if(w)w.remove();document.getElementById("globeWrap").style.display="none";const div=document.createElement("div");div.className="msg "+type;if(imgSrc){const im=document.createElement("img");im.src=imgSrc;div.appendChild(im);if(showDownload){const a=document.createElement("a");a.href=imgSrc;a.download="ankit-ai-edited.jpg";a.className="dBtn";a.textContent="⬇️ Download Karo";div.appendChild(a);}}const t=document.createElement("div");t.textContent=text;div.appendChild(t);chat.appendChild(div);chat.scrollTop=chat.scrollHeight;return div;}
+function onImageSelect(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=(ev)=>{selectedImage=ev.target.result;currentEditedImage=ev.target.result;document.getElementById("imgPreview").src=selectedImage;document.getElementById("imgName").innerText=f.name+" - Neeche se Decorate / BG Change karo, phir ➤ dabao";document.getElementById("previewBox").style.display="flex";};r.readAsDataURL(f);}
+function removeImage(){selectedImage=null;document.getElementById("previewBox").style.display="none";document.getElementById("bgPicker").style.display="none";}
+function showBGPicker(){document.getElementById("bgPicker").style.display=document.getElementById("bgPicker").style.display==="none"?"flex":"none";}
+function startListening(){if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){alert("Chrome me kholo");return;}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;const rec=new SR();rec.lang='hi-IN';rec.onresult=(e)=>{document.getElementById("message").value=e.results[0][0].transcript;sendMessage();};rec.start();}
+function speak(text){if(!voiceOn)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/[*#_<>]/g,'').slice(0,600));u.lang='hi-IN';speechSynthesis.speak(u);}catch(e){}}
+function cleanAI(t){if(!t)return"";let s=t;s=s.replace(/<br\s*\/?>/gi,"\n");s=s.replace(/<\/?[^>]+>/g,"");s=s.replace(/\*\*/g,"");s=s.replace(/__/g,"");s=s.replace(/##+/g,"");s=s.replace(/^\s*>\s?/gm,"");s=s.replace(/\n{3,}/g,"\n\n");return s.trim();}
+function loadImageToCanvas(src, callback){const img=new Image();img.onload=()=>{const c=document.getElementById("myCanvas");c.width=img.width;c.height=img.height;const ctx=c.getContext("2d");ctx.drawImage(img,0,0);callback(c,ctx,img);};img.src=src;}
+function decorateImage(){if(!selectedImage && !currentEditedImage){alert("Pehle + se photo bhejo!");return;}let src=currentEditedImage||selectedImage;loadImageToCanvas(src,(c,ctx,img)=>{ctx.filter="brightness(1.15) contrast(1.2) saturate(1.4)";ctx.drawImage(img,0,0);ctx.filter="none";ctx.strokeStyle="#facc15";ctx.lineWidth=Math.max(8,img.width*0.01);ctx.strokeRect(4,4,c.width-8,c.height-8);ctx.strokeStyle="#fff";ctx.lineWidth=3;ctx.strokeRect(16,16,c.width-32,c.height-32);const out=c.toDataURL("image/jpeg",0.92);currentEditedImage=out;addMessage("✨ Ho gaya! Photo Decorate kar di - Bright + Colourful + Golden Frame!","ai",out,true);speak("Photo decorate kar di hai");});}
+function enhanceImage(){if(!selectedImage && !currentEditedImage){alert("Pehle + se photo bhejo!");return;}let src=currentEditedImage||selectedImage;loadImageToCanvas(src,(c,ctx,img)=>{ctx.filter="brightness(1.08) contrast(1.25) saturate(1.15)";ctx.drawImage(img,0,0);ctx.filter="contrast(1.1) brightness(1.05)";ctx.drawImage(c,0,0);ctx.filter="none";const out=c.toDataURL("image/jpeg",0.95);currentEditedImage=out;addMessage("🌟 Ho gaya! Photo Enhance (4K jaisi) kar di - Ab zyada sharp aur clear!","ai",out,true);speak("Photo enhance kar di hai");});}
+function removeBG(){if(!selectedImage && !currentEditedImage){alert("Pehle + se photo bhejo!");return;}let src=currentEditedImage||selectedImage;loadImageToCanvas(src,(c,ctx,img)=>{let imgData=ctx.getImageData(0,0,c.width,c.height);let d=imgData.data;let br=d[0],bg=d[1],bb=d[2];for(let i=0;i<d.length;i+=4){let diff=Math.abs(d[i]-br)+Math.abs(d[i+1]-bg)+Math.abs(d[i+2]-bb);if(diff<60){d[i]=255;d[i+1]=255;d[i+2]=255;}}ctx.putImageData(imgData,0,0);const out=c.toDataURL("image/jpeg",0.92);currentEditedImage=out;addMessage("✂️ Ho gaya! Background White kar diya hai. Alag color chahiye to BG Change dabao.","ai",out,true);speak("Background white kar diya hai");});}
+function changeBG(color){if(!selectedImage && !currentEditedImage){alert("Pehle + se photo bhejo!");return;}let src=currentEditedImage||selectedImage;loadImageToCanvas(src,(c,ctx,img)=>{const bgCanvas=document.createElement("canvas");bgCanvas.width=c.width;bgCanvas.height=c.height;const bctx=bgCanvas.getContext("2d");if(color==='gradient1'){let g=bctx.createLinearGradient(0,0,c.width,c.height);g.addColorStop(0,"#6366f1");g.addColorStop(1,"#ec4899");bctx.fillStyle=g;}else if(color==='gradient2'){let g=bctx.createLinearGradient(0,0,c.width,c.height);g.addColorStop(0,"#06b6d4");g.addColorStop(1,"#22c55e");bctx.fillStyle=g;}else bctx.fillStyle=color;bctx.fillRect(0,0,c.width,c.height);const final=document.createElement("canvas");final.width=c.width;final.height=c.height;const fctx=final.getContext("2d");fctx.drawImage(bgCanvas,0,0);let w=c.width*0.92,h=c.height*0.92,x=c.width*0.04,y=c.height*0.04;fctx.drawImage(img,x,y,w,h);const out=final.toDataURL("image/jpeg",0.92);currentEditedImage=out;addMessage(`🎨 Ho gaya! Background change kar diya hai!`,"ai",out,true);speak("Background change kar diya hai");});}
+function hasImageWord(t){let l=t.toLowerCase();return l.includes("image")||l.includes("photo")||l.includes("picture")||l.includes("banao")||l.includes("bna do")||l.includes("bna dena")||l.includes("bana do")||l.includes("bna")||l.includes("draw")||l.includes("poster");}
+function hasTextWord(t){let l=t.toLowerCase();return l.includes("btao")||l.includes("batao")||l.includes("syllabus")||l.includes("kya hai")||l.includes("samjhao")||l.includes("answer");}
+function makeImage(prompt, containerDiv){const seed=Math.floor(Math.random()*99999);const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt+", colorful infographic, clean, high quality, 4k, detailed")}?width=1024&height=1024&seed=${seed}&model=flux&nologo=true`;const im=new Image();im.onload=()=>{const d=document.createElement("div");d.textContent=`🎨 Image bhi ban gayi!`;containerDiv.appendChild(d);const img=document.createElement("img");img.src=url;containerDiv.appendChild(img);const a=document.createElement("a");a.href=url;a.download="ankit-ai.jpg";a.target="_blank";a.className="dBtn";a.textContent="⬇️ Download Karo";containerDiv.appendChild(a);chat.scrollTop=chat.scrollHeight;};im.onerror=()=>{containerDiv.appendChild(document.createTextNode("Image load nahi hui, dobara try karo."));};im.src=url;}
+async function readImageOCR(imgSrc, statusDiv){try{statusDiv.textContent="📷 Photo padh raha hu... 10-20 sec lagega...";const result=await Tesseract.recognize(imgSrc,'eng+hin',{logger:m=>{if(m.status==='recognizing text'&&m.progress){statusDiv.textContent=`📷 Photo padh raha hu... ${Math.floor(m.progress*100)}%...`;}}});return result.data.text.trim();}catch(e){return"";}}
+async function callAI(prompt){try{const r=await fetch("https://text.pollinations.ai/"+encodeURIComponent(prompt));if(r.ok){let t=await r.text();if(t&&t.length>5)return cleanAI(t);}}catch(e){}throw new Error("fail");}
+async function sendMessage(){
+ const input=document.getElementById("message");let text=input.value.trim();const imgToSend=selectedImage;
+ if(!text&&imgToSend)text="Isme kya likha hai?";
+ if(!text&&!imgToSend)return;
+ input.value="";addMessage(text,"user",imgToSend);if(imgToSend)removeImage();
+ const low=text.toLowerCase();
+ if(low.includes("decorate")||low.includes("sundar")||low.includes("saja")){if(currentEditedImage){decorateImage();return;}addMessage("Pehle + se photo bhejo, phir 'Decorate kar do' bolo.","ai");return;}
+ if(low.includes("background")||low.includes("bg ")||low.includes("piche")){if(low.includes("remove")||low.includes("hata")||low.includes("white")){if(currentEditedImage){removeBG();return;}}if(currentEditedImage){showBGPicker();document.getElementById("previewBox").style.display="flex";addMessage("🎨 Photo wale box me se koi bhi color choose karo - Blue, Pink, Green, Gradient!","ai");return;}addMessage("Pehle + se photo bhejo, phir 'Background change kar do' bolo.","ai");return;}
+ if(low.includes("enhance")||low.includes("4k")){if(currentEditedImage && (low.includes("image")||low.includes("photo")||low.includes("is"))){enhanceImage();return;}}
+ if(imgToSend){const loading=addMessage("Photo mil gayi...","ai");const ocrText=await readImageOCR(imgToSend,loading);lastOCRText=ocrText;if(!ocrText||ocrText.length<10){loading.textContent="Photo dhundhli hai, saaf photo bhejo.";return;}if(low.includes("kya likha")||low.includes("kya hai")||low.includes("padh")){loading.textContent="Photo me ye likha hai:\n\n"+cleanAI(ocrText).slice(0,2000);return;}loading.textContent="Photo padh li! Answer nikal raha hu...";try{const prompt=`You are Ankit AI. Answer in SIMPLE Hinglish, no stars, no markdown, no HTML. Give answer for all questions in photo. Text: ${ocrText.slice(0,4000)} User: ${text}`;const ans=await callAI(prompt);loading.textContent="Photo padh ke Answer:\n\n"+ans;speak(ans);}catch(e){loading.textContent="Photo me ye mila:\n\n"+cleanAI(ocrText).slice(0,2000);}return;}
+ if(mode==='image' || (hasImageWord(text) && !hasTextWord(text))){let prompt=text.replace(/image banao|photo banao|picture banao|banao|bna do|bna dena|bana do|bna/gi,"").trim()||text;const loading=addMessage(`🎨 Image bana raha hu: "${prompt}"...`,"ai");makeImage(prompt,loading);return;}
+ if(hasImageWord(text) && hasTextWord(text)){const loading=addMessage("Syllabus likh raha hu + Image bhi bana raha hu...","ai");let cleanQ=text.replace(/or uska image.*|or image.*|image.*bna.*/gi,"").trim()||text;try{const prompt=`You are Ankit AI. Answer in SIMPLE Hinglish, no stars, no markdown, no HTML. Use plain simple lines. Question: ${cleanQ}`;const ans=await callAI(prompt);loading.textContent=ans+"\n\n---\n🎨 Neeche uski Image bhi bana raha hu...";speak(ans.slice(0,300));}catch(e){loading.textContent="Net slow hai.";return;}makeImage(cleanQ+" infographic chart",loading);return;}
+ const loading=addMessage("Soch raha hu...","ai");
+ if(low==="hi"||low==="hello"||low.includes("namaste")){loading.textContent="Namaste! Kaise ho? Kuch bhi puchho ya + se photo bhejo.";return;}
+ try{const reply=await callAI(`You are Ankit AI. Answer in SIMPLE Hinglish, no stars, no markdown, no HTML. Question: ${text}`);loading.textContent=reply;speak(reply);}catch(e){loading.textContent="Net slow hai, dobara try karo.";}
+}
+</script>
+</body>
+</html>
