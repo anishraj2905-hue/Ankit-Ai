@@ -4,29 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Ankit AI ✨</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,Arial}
 html,body{height:100dvh;background:#020617;color:#fff;overflow:hidden}
-body{display:flex;flex-direction:column;position:relative}
-.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 10%,#fff,transparent),radial-gradient(1px 1px at 80% 40%,#fff,transparent),radial-gradient(1px 1px at 30% 70%,#fff,transparent),radial-gradient(1px 1px at 90% 80%,#fff,transparent),radial-gradient(1px 1px at 10% 90%,#fff,transparent);animation:twinkle 2s infinite alternate}
+body{display:flex;flex-direction:column}
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 60% 10%,#fff,transparent),radial-gradient(1px 1px at 80% 40%,#fff,transparent),radial-gradient(1px 1px at 30% 70%,#fff,transparent);animation:twinkle 2s infinite alternate}
 @keyframes twinkle{from{opacity:.5}to{opacity:1}}
-header{flex-shrink:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(2,6,23,.8);backdrop-filter:blur(10px)}
+header{flex-shrink:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(2,6,23,.9);backdrop-filter:blur(10px)}
 header b{font-size:19px} header span{font-size:12px;color:#93c5fd}
-.topBtns{flex-shrink:0;z-index:2;display:flex;gap:8px;padding:8px 10px;overflow-x:auto;white-space:nowrap}
-.topBtns button{border:1px solid #3b82f6;background:rgba(30,58,138,.6);color:#fff;padding:8px 14px;border-radius:20px;font-size:14px;cursor:pointer;flex-shrink:0}
+.menuBtn{width:40px;height:40px;border-radius:50%;border:none;background:#1e293b;color:#fff;font-size:20px;cursor:pointer}
+.drawer{position:fixed;top:0;left:-260px;width:250px;height:100%;background:#0f172a;z-index:50;transition:.3s;padding:15px;overflow-y:auto;border-right:1px solid #334155}
+.drawer.open{left:0}
+.drawer h3{margin-bottom:12px}
+.drawer button{display:block;width:100%;text-align:left;background:#1e293b;color:#fff;border:none;padding:12px;border-radius:10px;margin-bottom:8px;font-size:15px;cursor:pointer}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:none}
+.overlay.show{display:block}
 .globeWrap{flex-shrink:0;z-index:1;text-align:center;padding:4px 0 0}
-.globe{width:90px;height:90px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 30% 30%,#60a5fa,#1e40af 55%,#020617);box-shadow:0 0 30px #3b82f6, inset -10px -10px 20px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:42px;animation:spin 12s linear infinite}
+.globe{width:80px;height:80px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 30% 30%,#60a5fa,#1e40af 55%,#020617);box-shadow:0 0 30px #3b82f6;display:flex;align-items:center;justify-content:center;font-size:38px;animation:spin 12s linear infinite}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-#chat{flex:1;min-height:0;overflow-y:auto;z-index:2;padding:12px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+#chat{flex:1;min-height:0;overflow-y:auto;z-index:2;padding:12px;display:flex;flex-direction:column;gap:12px}
 .msg{max-width:92%;padding:12px 14px;border-radius:18px;font-size:16px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
 .user{align-self:flex-end;background:#7c5cff;border-bottom-right-radius:5px}
-.ai{align-self:flex-start;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-bottom-left-radius:5px;backdrop-filter:blur(10px)}
+.ai{align-self:flex-start;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-bottom-left-radius:5px}
 .ai img{max-width:100%;border-radius:12px;margin-top:8px}
 .btnRow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .miniBtn{background:#2563eb;color:#fff;border:none;padding:9px 14px;border-radius:20px;font-size:14px;cursor:pointer}
-.miniBtn.green{background:#16a34a}
-.miniBtn.purple{background:#7c3aed}
-.searchWrap{flex-shrink:0;position:sticky;bottom:0;z-index:5;display:flex;gap:8px;padding:10px;background:rgba(2,6,23,.85);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.15);padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.miniBtn.green{background:#16a34a}.miniBtn.purple{background:#7c3aed}.miniBtn.orange{background:#ea580c}.miniBtn.pink{background:#db2777}
+.codeBox{background:#0f172a;color:#a5f3fc;padding:12px;border-radius:12px;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;margin-top:8px;border:1px solid #22d3ee;max-height:250px;overflow-y:auto;display:none}
+.codeBox.show{display:block}
+.searchWrap{flex-shrink:0;position:sticky;bottom:0;z-index:5;display:flex;gap:8px;padding:10px;background:rgba(2,6,23,.9);border-top:1px solid rgba(255,255,255,.15);padding-bottom:calc(10px + env(safe-area-inset-bottom))}
 .searchWrap button{width:44px;height:46px;border-radius:50%;border:none;font-size:20px;cursor:pointer;background:#1e293b;color:#fff;flex-shrink:0}
 #input{flex:1;border:none;outline:none;background:#1e293b;color:#fff;padding:0 16px;border-radius:25px;font-size:16px;min-width:0}
 #send{background:#7c5cff}
@@ -34,16 +41,23 @@ header b{font-size:19px} header span{font-size:12px;color:#93c5fd}
 </head>
 <body>
 <div class="stars"></div>
-<header><div><b>Ankit AI ✨</b><br><span>Apna Desi AI Dost</span></div><div>🌎</div></header>
-<div class="topBtns">
-<button id="voiceBtn" onclick="toggleVoice()">🔊 Voice ON</button>
-<button onclick="setMode('chat')">💬 Chat</button>
-<button onclick="setMode('image')">🎨 Image Banao</button>
-<button onclick="setMode('weather')">🌦️ Weather</button>
-<button onclick="clearChat()">🗑️ Clear</button>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="drawer" id="drawer">
+<h3>☰ Menu</h3>
+<button onclick="closeMenu();setMode('chat')">💬 Chat</button>
+<button onclick="closeMenu();setMode('image')">🎨 Image Banao</button>
+<button onclick="closeMenu();getWeather('Nagar Untari')">🌦️ Weather</button>
+<button onclick="closeMenu();showSongs()">🎵 Gaana</button>
+<button onclick="closeMenu();startQuiz()">📝 Quiz</button>
+<button onclick="closeMenu();tellJoke()">😂 Joke</button>
+<button onclick="closeMenu();showCodeMenu()">💻 App Banao</button>
+<button onclick="closeMenu();changeTheme()">🎨 Theme Badlo</button>
+<button onclick="closeMenu();clearChat()">🗑️ Clear Chat</button>
+<button onclick="closeMenu();toggleVoice()" id="voiceBtn2">🔊 Voice ON/OFF</button>
 </div>
+<header><div style="display:flex;gap:10px;align-items:center"><button class="menuBtn" onclick="toggleMenu()">☰</button><div><b>Ankit AI ✨</b><br><span>Apna Desi AI Dost</span></div></div><div>🌎</div></header>
 <div class="globeWrap"><div class="globe">🌎</div></div>
-<div id="chat"><div class="msg ai">Namaste! 🙏 Main Ankit AI hu. Photo bhejo, mai bata dunga. "Iska cartoon banao" bolo to cartoon bana dunga. Photo download bhi kar sakte ho!</div></div>
+<div id="chat"><div class="msg ai">Namaste! 🙏 Main Ankit AI hu. Wapas saaf-suthra ho gaya! ☰ Menu me sab kuch hai. Bolo "Ox game banao" to bana dunga, par ab sab saaf dikhega!</div></div>
 <div class="searchWrap">
 <button id="micBtn" onclick="startVoice()">🎤</button>
 <input id="input" placeholder="Yahan likho..." onkeydown="if(event.key==='Enter')sendMsg()">
@@ -52,155 +66,204 @@ header b{font-size:19px} header span{font-size:12px;color:#93c5fd}
 </div>
 <input type="file" id="file" hidden accept="image/*" onchange="sendImage(event)">
 <script>
-let voiceOn=true, mode='chat';
+let voiceOn=true, mode='chat', voiceRate=1;
 let chatBox=document.getElementById('chat');
-let lastImageUrl=null, lastImageElement=null;
-
-function toggleVoice(){voiceOn=!voiceOn;document.getElementById('voiceBtn').innerText=voiceOn?'🔊 Voice ON':'🔇 Voice OFF';if(!voiceOn)speechSynthesis.cancel();}
-function setMode(m){ mode=m; if(m==='weather'){getWeather('Nagar Untari');return;} addMsg('ai', m==='image' ? 'Image Mode ON hai 🎨 Ab kya image banau? Likho jaise - "ek billi"' : 'Chat Mode ON hai 💬 Ab pucho!'); }
+let lastImageUrl=null, lastImageElement=null, lastImageText="";
+let userName = localStorage.getItem('ankit_user_name') || "";
+let quizIndex=0, quizScore=0, inQuiz=false, inGame=false, gameNum=0, themeIdx=0;
+let jokes=["Teacher: Tum late kyu aaye? Student: Sir, board pe likha tha 'School Ahead, Go Slow' isliye slow aaya! 😂","Pappu: Doctor, mujhe bhoolne ki bimari hai. Doctor: Kab se? Pappu: Kab se kya? 😂","Santa: Mera beta bahut hoshiyar hai, usne exam me mere hi naam likh diya! 😂"];
+let shayaris=["Teri yaad me humne chai bhi pee li, ab neend nahi aati! ☕","Zindagi me dost nahi, dost me zindagi hai! ❤️"];
+let quizQs=[{q:"India ki Rajdhani kya hai?",a:"Delhi",opt:"A) Delhi  B) Mumbai  C) Kolkata"},{q:"2 + 2 x 2 = ?",a:"6",opt:"A) 4  B) 6  C) 8"},{q:"Taj Mahal kahan hai?",a:"Agra",opt:"A) Delhi  B) Agra  C) Jaipur"},{q:"Jharkhand ki Rajdhani?",a:"Ranchi",opt:"A) Ranchi  B) Patna  C) Bokaro"},{q:"Pani ka formula?",a:"H2O",opt:"A) CO2  B) H2O  C) O2"}];
+function toggleMenu(){document.getElementById('drawer').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function closeMenu(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+function toggleVoice(){voiceOn=!voiceOn;if(!voiceOn)speechSynthesis.cancel();}
+function setMode(m){ mode=m; addMsg('ai', m==='image' ? 'Image Mode ON hai 🎨 Ab kya image banau?' : 'Chat Mode ON hai 💬 Ab pucho!'); }
 function addMsg(who,text){let d=document.createElement('div');d.className='msg '+who;d.innerText=text;chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;return d;}
 function addImageMsg(src, caption){
-  let d=document.createElement('div');d.className='msg ai';
-  d.innerHTML=caption+'<br>';
-  let img=document.createElement('img');img.src=src;img.style.width='100%';img.style.borderRadius='12px';img.style.marginTop='8px';
-  d.appendChild(img);
+  let d=document.createElement('div');d.className='msg ai';d.innerHTML=caption+'<br>';
+  let img=document.createElement('img');img.src=src;img.style.width='100%';img.style.borderRadius='12px';img.style.marginTop='8px';d.appendChild(img);
   let row=document.createElement('div');row.className='btnRow';
-  let dl=document.createElement('button');dl.className='miniBtn green';dl.innerText='⬇️ Download Karo';
-  dl.onclick=()=>downloadImage(src);
-  let ct=document.createElement('button');ct.className='miniBtn purple';ct.innerText='🎨 Cartoon Banao';
-  ct.onclick=()=>makeCartoon(img);
-  row.appendChild(dl);row.appendChild(ct);
-  d.appendChild(row);
+  let dl=document.createElement('button');dl.className='miniBtn green';dl.innerText='⬇️ Download Karo';dl.onclick=()=>downloadImage(src);
+  let ct=document.createElement('button');ct.className='miniBtn purple';ct.innerText='🎨 Cartoon Banao';ct.onclick=()=>makeCartoon(img);
+  row.appendChild(dl);row.appendChild(ct);d.appendChild(row);
+  chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;lastImageUrl=src;lastImageElement=img;return d;
+}
+function speak(text){if(!voiceOn)return;try{speechSynthesis.cancel();let clean=text.replace(/[*#_<>]/g,'').replace(/\n+/g,'. ');let parts=clean.match(/.{1,400}(\s|$)/g)||[clean];let i=0;function speakNext(){if(i>=parts.length||!voiceOn)return;const u=new SpeechSynthesisUtterance(parts[i]);u.lang='hi-IN';u.rate=voiceRate;u.onend=()=>{i++;speakNext();};speechSynthesis.speak(u);}speakNext();}catch(e){}}
+function shareText(txt){ if(navigator.share){navigator.share({text:txt});} else {navigator.clipboard.writeText(txt); addMsg('ai','Copy ho gaya!');} }
+function changeTheme(){ let themes=['#020617','#3b0764','#022c22','#450a0a','#1e1b4b']; themeIdx=(themeIdx+1)%themes.length; document.body.style.background=themes[themeIdx]; addMsg('ai','Theme badal diya! 🎨'); }
+function tellJoke(){ let j=jokes[Math.floor(Math.random()*jokes.length)]; addMsg('ai',j); speak(j); }
+function tellShayari(){ let s=shayaris[Math.floor(Math.random()*shayaris.length)]; addMsg('ai',s); speak(s); }
+function showSongs(){
+  let d=document.createElement('div');d.className='msg ai';d.innerHTML='Konsa gaana sunna hai? 👇<br>';
+  let songs=['Arijit Singh - Tum Hi Ho','Shreya Ghoshal - Teri Meri','Bhojpuri - Ritesh Pandey Hit','Neha Kakkar - Party Song','Lofi Hindi'];
+  songs.forEach(s=>{let b=document.createElement('button');b.className='miniBtn orange';b.style.margin='4px';b.innerText='▶️ '+s;b.onclick=()=>{window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(s),'_blank');};d.appendChild(b);d.appendChild(document.createElement('br'));});
   chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;
-  lastImageUrl=src; lastImageElement=img;
+}
+function showCodeMenu(){
+  let d=document.createElement('div');d.className='msg ai';d.innerHTML='Konsa App banana hai? Ek dabao! 👇';
+  let codes=[
+    {t:'❌⭕ Ox Game', q:'Ox game ka code likh do'},
+    {t:'🧮 Calculator App', q:'Calculator app ka code likh do'},
+    {t:'✅ To-Do App', q:'To-Do app ka code likh do'},
+    {t:'🎲 Dice Game', q:'Dice game ka code likh do'},
+    {t:'⏰ Stopwatch', q:'Stopwatch app ka code likh do'}
+  ];
+  codes.forEach(c=>{let b=document.createElement('button');b.className='miniBtn';b.style.margin='4px';b.innerText=c.t;b.onclick=()=>{document.getElementById('input').value=c.q;sendMsg();};d.appendChild(b);d.appendChild(document.createElement('br'));});
+  chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;
+}
+// FIX: Code me <\/script> use kiya hai taaki bahar wala script na toote
+function addCodeMsg(codeText, lang){
+  let d=document.createElement('div');d.className='msg ai';
+  d.innerHTML='Ho gaya! 🎉 Tumhara <b>'+lang+'</b> ban gaya!';
+  let pre=document.createElement('div');pre.className='codeBox';pre.innerText=codeText;d.appendChild(pre);
+  let row=document.createElement('div');row.className='btnRow';
+  let view=document.createElement('button');view.className='miniBtn orange';view.innerText='👀 Code Dekho';
+  view.onclick=()=>{ pre.classList.toggle('show'); view.innerText=pre.classList.contains('show')?'🙈 Code Chhupao':'👀 Code Dekho'; };
+  let play=document.createElement('button');play.className='miniBtn green';play.innerText='▶️ Chalao / Khelo';
+  play.onclick=()=>{ let w=window.open('','_blank'); w.document.write(codeText); w.document.close(); };
+  let copy=document.createElement('button');copy.className='miniBtn purple';copy.innerText='📋 Copy';
+  copy.onclick=()=>{ navigator.clipboard.writeText(codeText).then(()=>{ copy.innerText='✅ Copy Ho Gaya!'; setTimeout(()=>copy.innerText='📋 Copy',2000); }); };
+  row.appendChild(play);row.appendChild(view);row.appendChild(copy);d.appendChild(row);
+  chatBox.appendChild(d);chatBox.scrollTop=chatBox.scrollHeight;
   return d;
 }
-function speak(text){if(!voiceOn)return;try{speechSynthesis.cancel();let clean=text.replace(/[*#_<>]/g,'').replace(/\n+/g,'. ');let parts=clean.match(/.{1,400}(\s|$)/g)||[clean];let i=0;function speakNext(){if(i>=parts.length||!voiceOn)return;const u=new SpeechSynthesisUtterance(parts[i]);u.lang='hi-IN';u.rate=1;u.onend=()=>{i++;speakNext();};speechSynthesis.speak(u);}speakNext();}catch(e){}}
-
-// --- FAST ONLINE CHAT - 4 NO WALA ---
-async function fastOnlineChat(q){
-  // Chota prompt + fast model = jaldi jawab
-  let url='https://text.pollinations.ai/'+encodeURIComponent('Hinglish me short me samjhao: '+q)+'?model=openai-fast';
-  let controller=new AbortController();
-  let timer=setTimeout(()=>controller.abort(), 15000);
-  try{
-    let r=await fetch(url,{signal:controller.signal});
-    clearTimeout(timer);
-    if(!r.ok) throw new Error('fail');
-    let ans=await r.text();
-    if(!ans || ans.length<2) throw new Error('empty');
-    return ans;
-  }catch(e){ clearTimeout(timer); throw e; }
+function getReadyCode(q){
+  let t=q.toLowerCase();
+  if(t.includes('ox') || t.includes('tic tac') || t.includes('tick tac')){
+    return {lang:'Ox Game ❌⭕', code:'<!DOCTYPE html><html><head><style>body{font-family:Arial;text-align:center;background:#020617;color:#fff;padding:20px} #board{display:grid;grid-template-columns:repeat(3,90px);gap:8px;justify-content:center;margin:20px auto} button.cell{width:90px;height:90px;font-size:36px;background:#1e293b;color:#fff;border:2px solid #7c5cff;border-radius:12px} #restart{padding:12px 25px;background:#7c5cff;color:#fff;border:none;border-radius:20px}</style></head><body><h1>Ox Game</h1><div id="msg">X ki baari!</div><div id="board"></div><button id="restart" onclick="reset()">Dobara Khelo</button><scr'+'ipt>let board=["","","","","","","","",""];let cur="X";let over=false;let b=document.getElementById("board");function draw(){b.innerHTML="";board.forEach((v,i)=>{let btn=document.createElement("button");btn.className="cell";btn.innerText=v;btn.onclick=()=>play(i);b.appendChild(btn);});}function play(i){if(board[i]||over)return;board[i]=cur;let win=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let w=win.find(c=>board[c[0]]&&board[c[0]]==board[c[1]]&&board[c[1]]==board[c[2]]);if(w){document.getElementById("msg").innerText=cur+" Jeet Gaya!";over=true;}else if(!board.includes("")){document.getElementById("msg").innerText="Draw!";over=true;}else{cur=cur=="X"?"O":"X";document.getElementById("msg").innerText=cur+" ki baari!";}draw();}function reset(){board=["","","","","","","","",""];cur="X";over=false;document.getElementById("msg").innerText="X ki baari!";draw();}draw();</scr'+'ipt></body></html>'};
+  }
+  if(t.includes('calculator')){
+    return {lang:'Calculator App 🧮', code:'<!DOCTYPE html><html><head><style>body{font-family:Arial;display:flex;justify-content:center;background:#020617;color:#fff} .box{background:#1e293b;padding:20px;border-radius:15px;width:300px} #out{background:#fff;color:#000;padding:15px;font-size:28px;text-align:right;border-radius:10px} .row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px} button{padding:15px;font-size:18px;border:none;border-radius:10px;background:#334155;color:#fff}</style></head><body><div class="box"><div id="out">0</div><div class="row"><button onclick="c()">C</button><button onclick="add(\x27/\x27)">/</button><button onclick="add(\x27*\x27)">*</button><button onclick="eq()">=</button><button onclick="add(7)">7</button><button onclick="add(8)">8</button><button onclick="add(9)">9</button><button onclick="add(\x27-\x27)">-</button><button onclick="add(4)">4</button><button onclick="add(5)">5</button><button onclick="add(6)">6</button><button onclick="add(\x27+\x27)">+</button><button onclick="add(1)">1</button><button onclick="add(2)">2</button><button onclick="add(3)">3</button><button onclick="eq()">=</button></div></div><scr'+'ipt>let e="";function add(v){e+=v;document.getElementById("out").innerText=e}function c(){e="";document.getElementById("out").innerText="0"}function eq(){try{e=String(eval(e));document.getElementById("out").innerText=e}catch{document.getElementById("out").innerText="Error"}}</scr'+'ipt></body></html>'};
+  }
+  if(t.includes('to-do')||t.includes('todo')||t.includes('to do')){
+    return {lang:'To-Do App ✅', code:'<!DOCTYPE html><html><head><style>body{font-family:Arial;background:#020617;color:#fff;padding:20px;text-align:center} input{padding:12px;width:70%;border-radius:10px;border:none} button{padding:12px 18px;background:#7c5cff;color:#fff;border:none;border-radius:10px;margin:5px} li{background:#1e293b;padding:12px;margin:8px auto;list-style:none;border-radius:10px;width:90%}</style></head><body><h2>Mera To-Do List</h2><input id="inp" placeholder="Kaam likho..."><button onclick="add()">Add +</button><ul id="list"></ul><scr'+'ipt>function add(){let v=document.getElementById("inp").value;if(!v)return;let li=document.createElement("li");li.innerText=v;li.onclick=()=>li.remove();document.getElementById("list").appendChild(li);document.getElementById("inp").value="";}</scr'+'ipt></body></html>'};
+  }
+  if(t.includes('dice')){
+    return {lang:'Dice Game 🎲', code:'<!DOCTYPE html><html><head><style>body{text-align:center;font-family:Arial;background:#020617;color:#fff;padding:30px} #dice{font-size:100px} button{padding:15px 30px;background:#f59e0b;border:none;border-radius:20px;font-size:18px}</style></head><body><h1>Dice Game</h1><div id="dice">🎲</div><h2 id="num">Dabao!</h2><button onclick="roll()">Dice Phenko!</button><scr'+'ipt>let faces=["⚀","⚁","⚂","⚃","⚄","⚅"];function roll(){let n=Math.floor(Math.random()*6);document.getElementById("dice").innerText=faces[n];document.getElementById("num").innerText="Aaya: "+(n+1);}</scr'+'ipt></body></html>'};
+  }
+  if(t.includes('stopwatch')){
+    return {lang:'Stopwatch ⏰', code:'<!DOCTYPE html><html><head><style>body{text-align:center;font-family:Arial;background:#020617;color:#fff;padding:30px} #t{font-size:60px} button{padding:12px 20px;margin:5px;border:none;border-radius:15px;background:#7c5cff;color:#fff}</style></head><body><h1>Stopwatch</h1><div id="t">00:00</div><button onclick="start()">Start</button><button onclick="stop()">Stop</button><button onclick="reset()">Reset</button><scr'+'ipt>let s=0,iv=null;function fmt(){let m=Math.floor(s/60),ss=s%60;document.getElementById("t").innerText=String(m).padStart(2,"0")+":"+String(ss).padStart(2,"0")}function start(){if(iv)return;iv=setInterval(()=>{s++;fmt()},1000)}function stop(){clearInterval(iv);iv=null}function reset(){stop();s=0;fmt()}</scr'+'ipt></body></html>'};
+  }
+  return null;
 }
-
+function startQuiz(){ inQuiz=true; quizIndex=0; quizScore=0; addMsg('ai','📝 Quiz Shuru! 5 sawal hai.'); askQuiz(); }
+function askQuiz(){ if(quizIndex>=quizQs.length){ addMsg('ai','Quiz Khatam! 🎉 Score: '+quizScore+' / '+quizQs.length); inQuiz=false; return; } let q=quizQs[quizIndex]; addMsg('ai','Q'+(quizIndex+1)+': '+q.q+'\n'+q.opt); }
+function startGame(){ inGame=true; gameNum=Math.floor(Math.random()*10)+1; addMsg('ai','🎮 Number Guess Game! 1 se 10 ke beech number guess karo!'); }
+async function getNews(){ let div=addMsg('ai','Khabar la raha hu... 📰'); try{ let r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://news.google.com/rss/search?q=India&hl=hi&gl=IN&ceid=IN:hi')); let t=await r.text(); let titles=[...t.matchAll(/<title>(.*?)<\/title>/g)].slice(2,7).map(m=>m[1].replace(/<![CDATA\[|\]\]>/g,'')); if(titles.length) div.innerText='📰 Aaj Ki Khabar:\n\n'+titles.map((x,i)=>(i+1)+'. '+x).join('\n\n'); else throw new Error(); }catch(e){ div.innerText='📰 Aaj Ki Khabar:\n\n1. Nagar Untari me thandi badh rahi hai.\n2. Cricket me India ne accha khela.'; } }
+async function translateText(txt){ try{ let r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(txt)+'&langpair=en|hi'); let j=await r.json(); return j.responseData.translatedText; }catch(e){ return null; } }
+function getGreetingReply(q){
+  let t=q.toLowerCase().trim(); let namePart=userName?' '+userName:'';
+  if(t.includes('mera naam')||t.includes('my name is')){ let name=q.replace(/mera naam/i,'').replace(/my name is/i,'').replace(/hai/i,'').replace(/hu/i,'').trim(); if(name.length>1&&name.length<20){ userName=name.charAt(0).toUpperCase()+name.slice(1); localStorage.setItem('ankit_user_name',userName); return 'Wah! Yaad kar liya! 😍 Ab se tum '+userName+' ho!'; } }
+  if(t.includes('mera naam kya')){ return userName?'Tumhara naam '+userName+' hai! 😎':'Tumne naam bataya hi nahi!'; }
+  if(t==='help'||t.includes('kya kar sakte')) return 'Main ye sab kar sakta hu! 👇\n\n💬 Chat\n💻 App Banao - "Ox game banao"\n🎨 Image\n🌦️ Weather\n🎵 Gaana\n😂 Joke\n📝 Quiz\n🎮 Game\n🧮 Calculator - "25+45"\n🌐 Translate\n⏰ Reminder\n📚 Homework - Photo bhejo';
+  if(t.includes('good morning')||t==='gm') return 'Good Morning'+namePart+'! ☀️ Chai pee li?';
+  if(t.includes('good afternoon')) return 'Good Afternoon'+namePart+'! 🌞';
+  if(t.includes('good evening')) return 'Good Evening'+namePart+'! 🌆';
+  if(t.includes('good night')||t.includes('goodnight')||t.includes('sone ja')) return 'Good Night'+namePart+'! 🌙 Sweet Dreams! 😴';
+  if(t==='hi'||t==='hii'||t==='hello'||t==='hey'||t.includes('namaste')) return 'Namaste'+namePart+'! 🙏 Kaise ho?';
+  if(t.includes('kaise ho')||t.includes('kya haal')||t.includes('how are you')) return 'Main ekdum mast hu'+namePart+'! 😎 Tum batao?';
+  if(t.includes('thank')||t.includes('dhanyavad')||t.includes('shukriya')) return 'Are koi baat nahi'+namePart+'! 😊';
+  if(t.includes('bye')||t.includes('alvida')) return 'Bye Bye'+namePart+'! 👋';
+  if(t.includes('i love you')) return 'Aww! 🥰 Main bhi tumse bahut pyaar karta hu!';
+  if(t.includes('tum kaun')||t.includes('tera naam')) return 'Main Ankit AI hu! ✨ Ankit Dubey ne banaya hai.';
+  if(t.includes('joke')){ tellJoke(); return 'JOKE_DONE'; }
+  if(t.includes('shayari')){ tellShayari(); return 'SHAYARI_DONE'; }
+  if(t.includes('gaana')||t.includes('gana')||t.includes('song')){ showSongs(); return 'Gaana sunna hai? Upar se ek dabao! 🎵'; }
+  if(t.includes('quiz')){ startQuiz(); return 'QUIZ_DONE'; }
+  if(t.includes('game')||t.includes('khelo')){ if(t.includes('ox')||t.includes('tic')) return 'CODE_MODE'; startGame(); return 'GAME_DONE'; }
+  if(t.includes('khabar')||t.includes('news')){ getNews(); return 'NEWS_DONE'; }
+  if(t.includes('theme')||t.includes('color badlo')){ changeTheme(); return 'THEME_DONE'; }
+  if(t.includes('tez bolo')){ voiceRate=1.5; return 'Ab main tez bolunga! 🚀'; }
+  if(t.includes('dheere bolo')){ voiceRate=0.7; return 'Ab main dheere bolunga! 🐢'; }
+  if(t.includes('yaad dilana')||t.includes('reminder')){ let msg=prompt('Kya yaad dilau?'); let sec=prompt('Kitne second baad?'); if(msg&&sec){ setTimeout(()=>{ addMsg('ai','⏰ Reminder! '+msg); alert('⏰ Reminder: '+msg); }, parseInt(sec)*1000); return 'Ho gaya! ⏰ '+sec+' second baad yaad dila dunga: '+msg; } return 'Reminder ke liye phir se bolo!'; }
+  if(t.includes('homework')||t.includes('padhai')){ if(lastImageText) return 'HOMEWORK_MODE'; return 'Homework karwana hai? 📚 Photo bhejo!'; }
+  if(t.includes('code')||t.includes('app banao')||t.includes('app bana')||t.includes('banao')||t.includes('banado')||t.includes('website')){ return 'CODE_MODE'; }
+  let calcMatch=t.match(/^(\d+)\s*([\+\-\*\/xX])\s*(\d+)$/) || t.match(/(\d+)\s*([\+\-\*\/xX])\s*(\d+)\s*(kitna|hoga|batao)?/);
+  if(calcMatch){ let a=parseFloat(calcMatch[1]), op=calcMatch[2], b=parseFloat(calcMatch[3]); let res=op==='+'?a+b:op==='-'?a-b:op==='*'||op==='x'||op==='X'?a*b:a/b; return '🧮 '+a+' '+op+' '+b+' = '+res; }
+  if(t.includes('table')||t.includes('pahada')){ let n=parseInt(t.replace(/\D/g,''))||2; let s='📝 '+n+' ka Table:\n'; for(let i=1;i<=10;i++) s+=n+' x '+i+' = '+(n*i)+'\n'; return s; }
+  if(t.includes('translate')){ return 'TRANSLATE_MODE'; }
+  if(t.includes('share')){ shareText('Ankit AI - Mera Desi AI Dost!'); return 'Share kar diya! 📱'; }
+  return null;
+}
+async function fastOnlineChat(q, isCode){
+  let prompt = isCode ? 'Create COMPLETE single HTML file app. User description: '+q+'. Only ONE HTML file, mobile friendly, beautiful, all buttons work, no explanation, only code. Start with <!DOCTYPE html>' : 'Hinglish me short me samjhao, dost jaise: '+q;
+  let url='https://text.pollinations.ai/'+encodeURIComponent(prompt)+'?model=openai-fast';
+  let controller=new AbortController(); let timer=setTimeout(()=>controller.abort(),30000);
+  try{ let r=await fetch(url,{signal:controller.signal}); clearTimeout(timer); if(!r.ok) throw new Error('fail'); let ans=await r.text(); if(!ans||ans.length<2) throw new Error('empty'); return ans; }catch(e){ clearTimeout(timer); throw e; }
+}
 async function sendMsg(){
-  let inp=document.getElementById('input');let q=inp.value.trim();if(!q)return;
-  addMsg('user',q);inp.value='';
+  let inp=document.getElementById('input');let q=inp.value.trim();if(!q)return; addMsg('user',q);inp.value='';
+  if(inQuiz){ let correct=quizQs[quizIndex].a.toLowerCase(); if(q.toLowerCase().includes(correct)) quizScore++; quizIndex++; askQuiz(); return; }
+  if(inGame){ let g=parseInt(q); if(g===gameNum){ addMsg('ai','Jeet gaye! 🎉'); inGame=false; } else if(g<gameNum){ addMsg('ai','Thoda bada socho! 👆'); } else { addMsg('ai','Thoda chota socho! 👇'); } return; }
   if((q.toLowerCase().includes('cartoon')) && lastImageElement){ makeCartoon(lastImageElement); return; }
-  if(q.toLowerCase().includes('download')){ if(lastImageUrl) downloadImage(lastImageUrl); else addMsg('ai','Download karne ke liye pehle koi image banao ya bhejo!'); return; }
+  if(q.toLowerCase().includes('download')){ if(lastImageUrl) downloadImage(lastImageUrl); else addMsg('ai','Download ke liye pehle image banao!'); return; }
   if(q.toLowerCase().includes('mausam')||q.toLowerCase().includes('weather')){ getWeather('Nagar Untari'); return; }
   if(mode==='image'){
     let div=addMsg('ai','Image bana raha hu... 🎨');
     let url='https://image.pollinations.ai/prompt/'+encodeURIComponent(q+', cartoon style, high quality')+'?seed='+Date.now()+'&width=512&height=512&nologo=true';
     let img=new Image(); img.crossOrigin='anonymous';
     img.onload=()=>{ div.remove(); addImageMsg(url,'Ye lo tumhari image! 🎨'); speak('Ye lo tumhari image ban gayi'); };
-    img.onerror=()=>{ div.innerText='Image net ki wajah se nahi bani. Phir se try karo.'; };
-    img.src=url;
-    return;
+    img.onerror=()=>{ div.innerText='Image net ki wajah se nahi bani.'; };
+    img.src=url; return;
   }
-  // Chat - ONLINE ONLY, FAST
-  let div=addMsg('ai','Soch raha hu... 🤔');
-  try{
-    let ans=await fastOnlineChat(q);
-    div.innerText=ans; chatBox.scrollTop=chatBox.scrollHeight; speak(ans);
-  }catch(e){
-    // Pehli baar fail ho to 1 baar turant retry - offline jawab nahi denge
-    div.innerText='Net thoda slow hai, dobara try kar raha hu... ⚡';
-    try{
-      let ans2=await fastOnlineChat(q);
-      div.innerText=ans2; chatBox.scrollTop=chatBox.scrollHeight; speak(ans2);
-    }catch(e2){
-      div.innerText='Net slow hai, ek baar phir se bhej do! 🙏 Internet check karke dobara pucho.';
+  let ready = getReadyCode(q);
+  if(ready){ addCodeMsg(ready.code, ready.lang); speak('App bana diya'); return; }
+  let greet=getGreetingReply(q);
+  if(greet){
+    if(greet==='HOMEWORK_MODE'){ let div=addMsg('ai','Homework dekh raha hu... 📚'); try{ let ans=await fastOnlineChat('Homework jawab Hinglish simple: '+lastImageText.substring(0,3000), false); div.innerText='📚 Homework ka jawab:\n\n'+ans; }catch(e){ div.innerText='Net slow hai.'; } return; }
+    if(greet==='TRANSLATE_MODE'){ let txt=q.replace(/translate/i,'').trim(); let tr=await translateText(txt||'I love you'); if(tr) addMsg('ai','🌐 Translate:\n'+txt+' = '+tr); return; }
+    if(greet==='CODE_MODE'){
+      let div=addMsg('ai','Tumhara App bana raha hu... 💻 10 second ruko...');
+      try{
+        let ans=await fastOnlineChat(q, true);
+        div.remove();
+        let cleanCode = ans.replace(/```html/gi,'').replace(/```/g,'').trim();
+        if(!cleanCode.includes('<html')) cleanCode = '<!DOCTYPE html><html><body style="padding:20px;text-align:center;font-family:Arial"><h2>App Ban Gaya!</h2><pre>'+cleanCode+'</pre></body></html>';
+        addCodeMsg(cleanCode, q);
+        speak('App bana diya');
+      }catch(e){ div.innerText='Net slow hai, phir se bolo!'; }
+      return;
     }
+    if(['JOKE_DONE','SHAYARI_DONE','QUIZ_DONE','GAME_DONE','NEWS_DONE','THEME_DONE'].includes(greet)) return;
+    addMsg('ai',greet); speak(greet); return;
   }
+  let finalQ=q;
+  if((q.toLowerCase().includes('is me')||q.toLowerCase().includes('isme')||q.toLowerCase().includes('kya hai')||q.toLowerCase().includes('jawab')) && lastImageText){ finalQ=q+" . Photo me ye likha hai: "+lastImageText.substring(0,3000); }
+  let div=addMsg('ai','Soch raha hu... 🤔');
+  try{ let ans=await fastOnlineChat(finalQ,false); div.innerText=ans; speak(ans); }catch(e){ div.innerText='Net slow hai, phir se bhej do! 🙏'; }
 }
-function clearChat(){chatBox.innerHTML='';addMsg('ai','Chat clear ho gaya! ✨ Naya sawal pucho.');speechSynthesis.cancel();}
-
+function clearChat(){chatBox.innerHTML='';addMsg('ai','Chat clear ho gaya! ✨');speechSynthesis.cancel();}
 function startVoice(){
   let Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!Rec){alert('Mic is browser me nahi chalega, Chrome me kholo.');return;}
+  if(!Rec){alert('Mic Chrome me kholo.');return;}
   let btn=document.getElementById('micBtn');btn.innerText='🔴';
   let rec=new Rec();rec.lang='hi-IN';
   rec.onresult=e=>{document.getElementById('input').value=e.results[0][0].transcript;btn.innerText='🎤';sendMsg();};
-  rec.onerror=()=>{btn.innerText='🎤';alert('Mic Permission DO!');};
-  rec.onend=()=>{btn.innerText='🎤';};
+  rec.onerror=()=>{btn.innerText='🎤';}; rec.onend=()=>{btn.innerText='🎤';};
   try{rec.start();}catch(e){btn.innerText='🎤';}
 }
-
 function sendImage(e){
   let f=e.target.files[0];if(!f)return;
   let rd=new FileReader();
-  rd.onload=()=>{
-    addMsg('user','[Photo bheji]');
-    addImageMsg(rd.result, 'Photo mil gayi! 👀 Bahut acchi photo hai! Iska cartoon banana hai to neeche "🎨 Cartoon Banao" dabao ya bolo "iska cartoon banao". Download karne ke liye "⬇️ Download Karo" dabao.');
-    speak('Photo mil gayi, bahut acchi photo hai. Cartoon banana hai to cartoon button dabao.');
+  rd.onload=async ()=>{
+    addMsg('user','[Photo bheji]'); addImageMsg(rd.result,'Photo mil gayi! 👀 Ab padh raha hu...');
+    try{ let rm=addMsg('ai','Photo padh raha hu... 📖'); let result=await Tesseract.recognize(rd.result,'eng+hin'); lastImageText=result.data.text; rm.remove(); if(lastImageText&&lastImageText.trim().length>10){ addMsg('ai','Ho gaya! ✅ Maine photo padh li hai. Ab bolo - "Isme kya hai?" ya "Homework karwa do"!'); } else { addMsg('ai','Is photo me text saaf nahi dikh raha.'); } }catch(err){ addMsg('ai','Photo padhne me dikkat aa rahi hai.'); }
   };
-  rd.readAsDataURL(f);
-  e.target.value='';
+  rd.readAsDataURL(f); e.target.value='';
 }
-
 async function downloadImage(src){
-  try{
-    addMsg('ai','Download ho raha hai... ⬇️');
-    let res=await fetch(src);
-    let blob=await res.blob();
-    let url=URL.createObjectURL(blob);
-    let a=document.createElement('a');a.href=url;a.download='ankit-ai-photo-'+Date.now()+'.jpg';document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),2000);
-    addMsg('ai','Ho gaya! ✅ Photo gallery me save ho gayi.');
-    speak('Photo download ho gayi');
-  }catch(e){
-    let a=document.createElement('a');a.href=src;a.download='ankit-ai-photo.jpg';a.target='_blank';document.body.appendChild(a);a.click();a.remove();
-    addMsg('ai','Download link khol diya hai, wahan se save kar lo! ✅');
-  }
+  try{ addMsg('ai','Download ho raha hai... ⬇️'); let res=await fetch(src); let blob=await res.blob(); let url=URL.createObjectURL(blob); let a=document.createElement('a');a.href=url;a.download='ankit-ai-photo-'+Date.now()+'.jpg';document.body.appendChild(a);a.click();a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); addMsg('ai','Ho gaya! ✅ Photo save ho gayi.'); }catch(e){ let a=document.createElement('a');a.href=src;a.download='ankit-ai-photo.jpg';a.target='_blank';document.body.appendChild(a);a.click();a.remove(); }
 }
-
 function makeCartoon(imgEl){
-  try{
-    addMsg('ai','Cartoon bana raha hu... 🎨 2 second ruko...');
-    let img=new Image(); img.crossOrigin='anonymous';
-    img.onload=()=>{
-      let canvas=document.createElement('canvas');
-      canvas.width=img.naturalWidth||500; canvas.height=img.naturalHeight||500;
-      let ctx=canvas.getContext('2d');
-      ctx.filter='saturate(1.8) contrast(1.3) brightness(1.05)';
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      ctx.filter='none';
-      let cartoonUrl=canvas.toDataURL('image/jpeg',0.9);
-      addImageMsg(cartoonUrl,'Ye lo tumhara cartoon! 🎨😍 Kaisa laga? Download kar lo!');
-      speak('Ye lo tumhara cartoon ban gaya, kaisa laga');
-    };
-    img.onerror=()=>{
-      imgEl.style.filter='saturate(2) contrast(1.4) brightness(1.1)';
-      addMsg('ai','Cartoon filter laga diya! 🎨 Upar wali photo ab cartoon jaisi lag rahi hai. Download ke liye screenshot le lo!');
-    };
-    img.src=imgEl.src;
-  }catch(e){ addMsg('ai','Cartoon nahi bana, phir se try karo!'); }
+  try{ addMsg('ai','Cartoon bana raha hu... 🎨'); let img=new Image(); img.crossOrigin='anonymous';
+    img.onload=()=>{ let canvas=document.createElement('canvas'); canvas.width=img.naturalWidth||500; canvas.height=img.naturalHeight||500; let ctx=canvas.getContext('2d'); ctx.filter='saturate(1.8) contrast(1.3) brightness(1.05)'; ctx.drawImage(img,0,0,canvas.width,canvas.height); ctx.filter='none'; let cartoonUrl=canvas.toDataURL('image/jpeg',0.9); addImageMsg(cartoonUrl,'Ye lo tumhara cartoon! 🎨😍'); };
+    img.onerror=()=>{ imgEl.style.filter='saturate(2) contrast(1.4) brightness(1.1)'; addMsg('ai','Cartoon filter laga diya! 🎨'); };
+    img.src=imgEl.src; }catch(e){ addMsg('ai','Cartoon nahi bana!'); }
 }
-
 async function getWeather(city){
-  city = city || prompt("Kaun se city ka mausam dekhna hai?", "Nagar Untari") || "Nagar Untari";
+  city=city||prompt("Kaun se city ka mausam?","Nagar Untari")||"Nagar Untari";
   let div=addMsg('ai','Mausam dekh raha hu... 🌦️');
-  try{
-    let geo=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`).then(r=>r.json());
-    if(!geo.results){div.innerText='City nahi mili! Sahi naam likho.';return;}
-    let lat=geo.results[0].latitude, lon=geo.results[0].longitude;
-    let data=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`).then(r=>r.json());
-    let c=data.current;
-    let html=`📍 ${geo.results[0].name}\n🌡️ Temp: ${c.temperature_2m}°C\n💧 Humidity: ${c.relative_humidity_2m}%\n🌧️ Barish: ${c.precipitation}mm\n💨 Hawa: ${c.wind_speed_10m} km/h\n\n📅 7 Din Ka Forecast:\n`;
-    data.daily.time.forEach((d,i)=>{ html+=`${d} : ${data.daily.temperature_2m_min[i]}°C - ${data.daily.temperature_2m_max[i]}°C | Barish ${data.daily.precipitation_probability_max[i]}%\n`; });
-    div.innerText=html; speak(`${geo.results[0].name} me abhi ${c.temperature_2m} degree hai.`);
-  }catch(e){ div.innerText='Internet ON karo! Weather ke liye net chahiye.'; }
+  try{ let geo=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`).then(r=>r.json()); if(!geo.results){div.innerText='City nahi mili!';return;} let lat=geo.results[0].latitude, lon=geo.results[0].longitude; let data=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`).then(r=>r.json()); let c=data.current; let html=`📍 ${geo.results[0].name}\n🌡️ Temp: ${c.temperature_2m}°C\n💧 Humidity: ${c.relative_humidity_2m}%\n🌧️ Barish: ${c.precipitation}mm\n💨 Hawa: ${c.wind_speed_10m} km/h\n`; div.innerText=html; speak(`${geo.results[0].name} me ${c.temperature_2m} degree hai.`); }catch(e){ div.innerText='Internet ON karo!'; }
 }
 </script>
 </body>
